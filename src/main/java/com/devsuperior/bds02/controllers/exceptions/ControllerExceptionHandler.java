@@ -2,6 +2,7 @@ package com.devsuperior.bds02.controllers.exceptions;
 
 import java.time.Instant;
 
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -41,6 +42,20 @@ public class ControllerExceptionHandler {
 		error.setPath(request.getPathInfo());
 		
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+	}
+	
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<StandardError> entityNotFoundException(EntityNotFoundException e, 
+			HttpServletRequest request) {
+		var error = new StandardError();
+		
+		error.setTimestamp(Instant.now());
+		error.setStatus(HttpStatus.NOT_FOUND.value());
+		error.setError(e.getMessage());
+		error.setMessage("Entity not found.");
+		error.setPath(request.getPathInfo());
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
 	}
 	
 }
